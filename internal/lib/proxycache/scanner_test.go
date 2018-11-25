@@ -1,7 +1,7 @@
-package cache_test
+package proxycache_test
 
 import (
-	"github.com/maetthu/ngxcpd/internal/lib/cache"
+	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
 	"reflect"
 	"sync"
 	"testing"
@@ -9,15 +9,15 @@ import (
 
 func TestScanDir(t *testing.T) {
 	var mutex sync.Mutex
-	files := make(map[string]*cache.Entry)
+	files := make(map[string]*proxycache.Entry)
 
-	callback := func(entry *cache.Entry) {
+	callback := func(entry *proxycache.Entry) {
 		mutex.Lock()
 		files[entry.Key] = entry
 		mutex.Unlock()
 	}
 
-	if err := cache.ScanDir("../../../testdata/cache_files", callback); err != nil {
+	if err := proxycache.ScanDir("../../../testdata/cache_files", callback); err != nil {
 		t.Error(err)
 	}
 

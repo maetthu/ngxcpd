@@ -1,4 +1,4 @@
-package cache
+package proxycache
 
 import (
 	"github.com/karrick/godirwalk"

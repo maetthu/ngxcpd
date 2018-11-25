@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/maetthu/ngxcpd/internal/lib/cache"
+	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
 	"github.com/spf13/cobra"
 	"strconv"
 	"strings"
@@ -30,7 +30,7 @@ var inspectCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, f := range args {
-			e, err := cache.FromFile(f)
+			e, err := proxycache.FromFile(f)
 
 			if err != nil {
 				fmt.Printf("%v\n", err)

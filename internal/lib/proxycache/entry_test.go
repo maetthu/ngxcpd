@@ -1,7 +1,7 @@
-package cache_test
+package proxycache_test
 
 import (
-	"github.com/maetthu/ngxcpd/internal/lib/cache"
+	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -9,7 +9,7 @@ import (
 )
 
 // CacheFiles contains expected metadata of files in testdata/cache_files
-var CacheFiles = []*cache.Entry{
+var CacheFiles = []*proxycache.Entry{
 	{
 		Filename:     "testdata/cache_files/3/f9/f46162e692a012e2b97c2cc1d2c33f93",
 		Version:      5,
@@ -126,7 +126,7 @@ var CacheFiles = []*cache.Entry{
 func TestFromFile(t *testing.T) {
 	for _, e := range CacheFiles {
 		e.Filename = filepath.Join("../../..", e.Filename)
-		load, err := cache.FromFile(e.Filename)
+		load, err := proxycache.FromFile(e.Filename)
 
 		if err != nil {
 			t.Error(err)

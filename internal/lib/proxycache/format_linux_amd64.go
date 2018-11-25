@@ -1,4 +1,4 @@
-package cache
+package proxycache
 
 // cache file format from:
 // https://github.com/nginx/nginx/blob/b66ee453cc6bc1832c3f056c9a46240bd390617c/src/http/ngx_http_cache.h#L126-L142
