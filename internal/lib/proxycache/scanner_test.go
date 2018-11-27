@@ -3,6 +3,7 @@ package proxycache_test
 import (
 	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
 	"reflect"
+	"runtime"
 	"sync"
 	"testing"
 )
@@ -17,7 +18,7 @@ func TestScanDir(t *testing.T) {
 		mutex.Unlock()
 	}
 
-	if err := proxycache.ScanDir("../../../testdata/cache_files", callback); err != nil {
+	if err := proxycache.ScanDir("../../../testdata/cache_files", callback, runtime.NumCPU()); err != nil {
 		t.Error(err)
 	}
 

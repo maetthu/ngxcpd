@@ -5,16 +5,12 @@ import (
 	"sync"
 )
 
-const (
-	indexWorkers = 32
-)
-
 // ScanDir walks a caching directory and calls the callback function for each caching file
-func ScanDir(dir string, callback func(*Entry)) error {
-	indexQueue := make(chan string, indexWorkers*128)
+func ScanDir(dir string, callback func(*Entry), numWorkers int) error {
+	indexQueue := make(chan string, numWorkers*128)
 	var indexWg sync.WaitGroup
 
-	for i := 0; i < indexWorkers; i++ {
+	for i := 0; i < numWorkers; i++ {
 		indexWg.Add(1)
 
 		go func(index chan string) {
