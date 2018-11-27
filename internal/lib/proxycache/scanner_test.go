@@ -22,11 +22,11 @@ func TestScanDir(t *testing.T) {
 		t.Error(err)
 	}
 
-	if len(files) != len(CacheFiles) {
+	if len(files) != len(proxycache.Test_CacheFiles) {
 		t.Fatal("Incorrect number of cache files returned from ScanDir")
 	}
 
-	for _, f := range CacheFiles {
+	for _, f := range proxycache.Test_CacheFiles {
 		e, ok := files[f.Key]
 
 		if !ok {

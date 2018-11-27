@@ -5,6 +5,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"github.com/rjeczalik/notify"
 	"log"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -60,6 +61,25 @@ func (z *Zone) Watch() error {
 	}
 
 	return nil
+}
+
+// Delete removes an entry from cache and from filesystem
+func (z *Zone) Delete(h string) {
+	if e, ok := z.Cache.Get(h); ok {
+		f := e.(*proxycache.Entry).Filename
+		_ = os.Remove(f)
+		z.Cache.Delete(h)
+	}
+}
+
+// WalkNDelete calls function for each entry in cache and removes it if func returns true
+func (z *Zone) WalkNDelete(filter func(entry *proxycache.Entry) bool) {
+	// TODO: Items() copies *whole* cache into a new map... whhich doesn't sound particularly efficient
+	for k, v := range z.Cache.Items() {
+		if filter(v.Object.(*proxycache.Entry)) {
+			z.Delete(k)
+		}
+	}
 }
 
 // NewZone creates a new indexer instance for given path
