@@ -48,6 +48,7 @@ var inspectCmd = &cobra.Command{
 		Key:          %s,
 		HeaderStart:  %d,
 		BodyStart:    %d,
+		RawHeader:    %s,
 	},
 `,
 					strconv.Quote(e.Filename),
@@ -58,6 +59,7 @@ var inspectCmd = &cobra.Command{
 					strconv.Quote(e.Key),
 					e.HeaderStart,
 					e.BodyStart,
+					strconv.Quote(e.RawHeader),
 				)
 			} else {
 				fmt.Printf(`%s

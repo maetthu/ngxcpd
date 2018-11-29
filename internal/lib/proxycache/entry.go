@@ -2,18 +2,18 @@ package proxycache
 
 import (
 	"bufio"
-	"bytes"
 	"crypto/md5"
 	"encoding/binary"
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
 const (
-	cacheVersion   = 0x5
-	keyPrefetchLen = 256
+	cacheVersion = 0x5
+	prefetchLen  = 256
 )
 
 // ParseError denotes an error parsing a cache file
@@ -35,6 +35,7 @@ type Entry struct {
 	Key          string
 	HeaderStart  int
 	BodyStart    int
+	RawHeader    string
 }
 
 // Hash returns the MD5 hash of the cache key
@@ -48,24 +49,7 @@ func (e *Entry) Hash() (string, error) {
 
 // Response returns the HTTP response (sans body) parsed from cache file
 func (e *Entry) Response() (*http.Response, error) {
-	f, err := os.Open(e.Filename)
-	defer f.Close()
-
-	if err != nil {
-		return nil, err
-	}
-
-	if o, err := f.Seek(int64(e.HeaderStart), 0); err != nil || o != int64(e.HeaderStart) {
-		return nil, &ParseError{}
-	}
-
-	buf := make([]byte, e.BodyStart-e.HeaderStart)
-
-	if n, err := f.Read(buf); err != nil || n < len(buf) {
-		return nil, &ParseError{}
-	}
-
-	reader := bufio.NewReader(bytes.NewReader(buf))
+	reader := bufio.NewReader(strings.NewReader(e.RawHeader))
 	res, err := http.ReadResponse(reader, nil)
 
 	if err != nil {
@@ -84,10 +68,10 @@ func FromFile(filename string) (*Entry, error) {
 		return nil, err
 	}
 
-	// assume cache key is at most keyPrefetchLen bytes long, read further later if necessary
-	buf := make([]byte, offsetKey+keyPrefetchLen)
+	// assume cache key + response headers are at most prefetchLen bytes long, read further later if necessary
+	buf := make([]byte, offsetKey+prefetchLen)
 
-	if n, err := f.Read(buf); err != nil || n < len(buf) {
+	if n, err := f.Read(buf); err != nil || n < offsetKey {
 		return nil, &ParseError{}
 	}
 
@@ -115,19 +99,22 @@ func FromFile(filename string) (*Entry, error) {
 	e.HeaderStart = int(binary.LittleEndian.Uint16(buf[offsetHeaderStart : offsetHeaderStart+2]))
 	e.BodyStart = int(binary.LittleEndian.Uint16(buf[offsetBodyStart : offsetBodyStart+2]))
 
-	if e.HeaderStart > len(buf) {
-		// key is longer than anticipated, read more from file
-		keybuf := make([]byte, e.HeaderStart-offsetKey-keyPrefetchLen-1)
+	if e.BodyStart > len(buf) {
+		// key+headers are longer than anticipated, read more from file
+		morebuf := make([]byte, e.BodyStart-offsetKey-prefetchLen)
 
-		if n, err := f.Read(keybuf); err != nil || n < len(keybuf) {
+		if n, err := f.Read(morebuf); err != nil || n < len(morebuf) {
 			return nil, &ParseError{}
 		}
 
-		buf = append(buf, keybuf...)
+		buf = append(buf, morebuf...)
 	}
 
 	// determine cache key
 	e.Key = string(buf[offsetKey : e.HeaderStart-1])
+
+	// set raw response header
+	e.RawHeader = string(buf[e.HeaderStart:e.BodyStart])
 
 	return e, nil
 }

@@ -21,17 +21,21 @@ func TestFromFile(t *testing.T) {
 		}
 
 		if !reflect.DeepEqual(e, load) {
-			t.Errorf("Loaded cache metadata (%+v) does not match expected value (%+v)", load, e)
+			t.Errorf("Loaded metadata (%+v) does not match expected value (%+v)", load, e)
 		}
 
-		h, err := e.Hash()
+		h, err := load.Hash()
 
 		if err != nil {
 			t.Error(err)
 		}
 
-		if filepath.Base(e.Filename) != h {
+		if filepath.Base(load.Filename) != h {
 			t.Errorf("Hash calculated from key does not match hash derived from filename")
+		}
+
+		if _, err := load.Response(); err != nil {
+			t.Error(err)
 		}
 	}
 }
