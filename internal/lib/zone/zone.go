@@ -16,7 +16,7 @@ type Zone struct {
 	Cache *cache.Cache
 }
 
-// Warmup scans the cache directory and adds its contents to the indexer queue
+// Warmup scans the cache directory and adds its contents to the index
 func (z *Zone) Warmup(numWorkers int) error {
 	return proxycache.ScanDir(z.Path, func(entry *proxycache.Entry) {
 		if h, err := entry.Hash(); err == nil {
@@ -74,7 +74,7 @@ func (z *Zone) Delete(h string) {
 
 // WalkNDelete calls function for each entry in cache and removes it if func returns true
 func (z *Zone) WalkNDelete(filter func(entry *proxycache.Entry) bool) {
-	// TODO: Items() copies *whole* cache into a new map... whhich doesn't sound particularly efficient
+	// TODO: Items() copies *whole* cache into a new map... which doesn't sound particularly efficient
 	for k, v := range z.Cache.Items() {
 		if filter(v.Object.(*proxycache.Entry)) {
 			z.Delete(k)
