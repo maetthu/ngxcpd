@@ -11,7 +11,7 @@ var testdataDir = "../../../testdata/cache_files"
 
 // TestFromFile checks if the file parser works as expected
 func TestFromFile(t *testing.T) {
-	for _, e := range proxycache.Test_CacheFiles {
+	for _, e := range proxycache.TestdataCacheFiles {
 		e.Filename = filepath.Join(testdataDir, e.Filename)
 		load, err := proxycache.FromFile(e.Filename)
 

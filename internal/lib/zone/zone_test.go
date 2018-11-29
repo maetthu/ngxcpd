@@ -53,7 +53,7 @@ func TestZone_Warmup(t *testing.T) {
 
 	items := z.Cache.Items()
 
-	if len(items) != len(proxycache.Test_CacheFiles) {
+	if len(items) != len(proxycache.TestdataCacheFiles) {
 		t.Error("Number of item in cache should be the same as in the directory")
 	}
 
@@ -61,7 +61,7 @@ items:
 	for k, v := range items {
 		e := v.Object.(*proxycache.Entry)
 
-		for _, i := range proxycache.Test_CacheFiles {
+		for _, i := range proxycache.TestdataCacheFiles {
 			h, _ := i.Hash()
 
 			if e.Key == i.Key && k == h {
@@ -116,11 +116,11 @@ func TestZone_WalkNDelete_Keep(t *testing.T) {
 	f := func(entry *proxycache.Entry) bool { return false }
 	filecount, itemcount := runWalkNDelete(t, f)
 
-	if filecount != len(proxycache.Test_CacheFiles) {
+	if filecount != len(proxycache.TestdataCacheFiles) {
 		t.Error("Test should not have deleted any files")
 	}
 
-	if itemcount != len(proxycache.Test_CacheFiles) {
+	if itemcount != len(proxycache.TestdataCacheFiles) {
 		t.Error("Cache should still contain all items")
 	}
 }

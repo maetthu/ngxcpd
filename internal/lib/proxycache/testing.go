@@ -2,8 +2,8 @@ package proxycache
 
 import "time"
 
-// Test_CacheFiles contains expected metadata of files in testdata/cache_files
-var Test_CacheFiles = []*Entry{
+// TestdataCacheFiles contains expected metadata of files in testdata/cache_files
+var TestdataCacheFiles = []*Entry{
 	{
 		Filename:     "1/00/273725162d80a5f4a63c9c70caf5e001",
 		Version:      5,
