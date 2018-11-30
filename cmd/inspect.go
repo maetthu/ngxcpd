@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
 	"github.com/spf13/cobra"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -30,11 +31,19 @@ var inspectCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, f := range args {
+			if stat, err := os.Stat(f); err != nil {
+				fmt.Printf("Error reading file %s: %v\n", f, err)
+				continue
+			} else if stat.IsDir() {
+				fmt.Printf("%s is a directory, file expected\n", f)
+				continue
+			}
+
 			e, err := proxycache.FromFile(f)
 
 			if err != nil {
 				fmt.Printf("%v\n", err)
-				return
+				continue
 			}
 
 			if t, err := cmd.Flags().GetBool("testfixture"); err == nil && t {
