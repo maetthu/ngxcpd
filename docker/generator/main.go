@@ -9,6 +9,7 @@ import (
 	"log"
 	"math/big"
 	"net/http"
+	"time"
 )
 
 var tags = []string{
@@ -67,6 +68,10 @@ func content(w http.ResponseWriter, r *http.Request) {
 	for _, t := range randomTags(10) {
 		w.Header().Add("X-XKey", t)
 	}
+
+	// generate random timestamp for setting last modified date
+	ts, _ := rand.Int(rand.Reader, big.NewInt(time.Now().Unix()))
+	w.Header().Set("Last-Modified", time.Unix(ts.Int64(), 0).Format(http.TimeFormat))
 
 	w.Header().Add("X-Some-Header", "whatever")
 
