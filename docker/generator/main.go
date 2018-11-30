@@ -57,7 +57,7 @@ func randomTags(num int) []string {
 
 	var out []string
 
-	for k, _ := range t {
+	for k := range t {
 		out = append(out, k)
 	}
 

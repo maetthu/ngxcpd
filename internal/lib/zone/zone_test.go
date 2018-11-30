@@ -106,7 +106,7 @@ func runWalkNDelete(zoneDir string, t *testing.T, f func(entry *proxycache.Entry
 func TestZone_WalkNDelete_Delete(t *testing.T) {
 	callback := func(entry *proxycache.Entry) bool { return true }
 
-	for zoneDir, _ := range testfixtures.TestdataCacheFiles {
+	for zoneDir := range testfixtures.TestdataCacheFiles {
 		filecount, itemcount := runWalkNDelete(zoneDir, t, callback)
 
 		if filecount > 0 {
