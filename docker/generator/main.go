@@ -43,14 +43,15 @@ func randomBytes() []byte {
 
 func randomTags(num int) []string {
 	t := make(map[string]bool)
+	n, _ := rand.Int(rand.Reader, big.NewInt(int64(num)))
 
 	for {
-		ti, _ := rand.Int(rand.Reader, big.NewInt(int64(len(tags))))
-		t[tags[ti.Int64()]] = true
-
-		if len(t) == num {
+		if int64(len(t)) == n.Int64() {
 			break
 		}
+
+		ti, _ := rand.Int(rand.Reader, big.NewInt(int64(len(tags))))
+		t[tags[ti.Int64()]] = true
 	}
 
 	var out []string
