@@ -20,7 +20,7 @@ dist:
 	goreleaser --rm-dist
 
 test:
-	@go test -v ${PKG_LIST}
+	@go test -v -tags=fixtures ${PKG_LIST}
 
 vet:
 	@go vet ${PKG_LIST}

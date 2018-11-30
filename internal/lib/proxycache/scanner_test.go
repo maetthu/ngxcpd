@@ -2,6 +2,8 @@ package proxycache_test
 
 import (
 	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
+	"github.com/maetthu/ngxcpd/internal/lib/testfixtures"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"sync"
@@ -9,32 +11,36 @@ import (
 )
 
 func TestScanDir(t *testing.T) {
-	var mutex sync.Mutex
-	files := make(map[string]*proxycache.Entry)
+	for zones, cacheFiles := range testfixtures.TestdataCacheFiles {
+		dir := filepath.Join(testdataDir, zones)
 
-	callback := func(entry *proxycache.Entry) {
-		mutex.Lock()
-		files[entry.Key] = entry
-		mutex.Unlock()
-	}
+		var mutex sync.Mutex
+		files := make(map[string]*proxycache.Entry)
 
-	if err := proxycache.ScanDir("../../../testdata/cache_files", callback, runtime.NumCPU()); err != nil {
-		t.Error(err)
-	}
-
-	if len(files) != len(proxycache.TestdataCacheFiles) {
-		t.Fatal("Incorrect number of cache files returned from ScanDir")
-	}
-
-	for _, f := range proxycache.TestdataCacheFiles {
-		e, ok := files[f.Key]
-
-		if !ok {
-			t.Errorf("Key %s not found in returned results", f.Key)
+		callback := func(entry *proxycache.Entry) {
+			mutex.Lock()
+			files[entry.Key] = entry
+			mutex.Unlock()
 		}
 
-		if !reflect.DeepEqual(e, f) {
-			t.Errorf("Loaded cache metadata (%+v) does not match expected value (%+v)", e, f)
+		if err := proxycache.ScanDir(dir, callback, runtime.NumCPU()); err != nil {
+			t.Error(err)
+		}
+
+		if len(files) != len(cacheFiles) {
+			t.Fatal("Incorrect number of cache files returned from ScanDir")
+		}
+
+		for _, f := range cacheFiles {
+			e, ok := files[f.Key]
+
+			if !ok {
+				t.Errorf("Key %s not found in returned results", f.Key)
+			}
+
+			if !reflect.DeepEqual(e, f) {
+				t.Errorf("Loaded cache metadata (%+v) does not match expected value (%+v)", e, f)
+			}
 		}
 	}
 
