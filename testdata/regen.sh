@@ -47,4 +47,5 @@ var TestdataCacheFilesZone${z} = []*proxycache.Entry{
     echo '}' >> $TMP
     mv $TMP $OUT
     go fmt $OUT
+    git update-index --assume-unchanged $OUT
 done
