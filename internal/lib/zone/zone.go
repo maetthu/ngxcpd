@@ -20,7 +20,7 @@ type Zone struct {
 func (z *Zone) Warmup(numWorkers int) error {
 	return proxycache.ScanDir(z.Path, func(entry *proxycache.Entry) {
 		if h, err := entry.Hash(); err == nil {
-			z.Cache.Set(h, entry, time.Until(entry.Expire))
+			z.Cache.Set(h, entry, cache.DefaultExpiration)
 		}
 	}, numWorkers)
 }
@@ -45,7 +45,7 @@ func (z *Zone) Watch() error {
 		case notify.InMovedTo:
 			if ce, err := proxycache.FromFile(e.Path()); err == nil {
 				if h, err := ce.Hash(); err == nil {
-					z.Cache.Set(h, ce, time.Until(ce.Expire))
+					z.Cache.Set(h, ce, cache.DefaultExpiration)
 				}
 			}
 		case notify.Remove:
