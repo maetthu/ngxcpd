@@ -4,6 +4,16 @@ nginx cache purge daemon (and inspector)
 
 (Work in progress)
 
+## roadmap
+
+- [x] nginx cache file parser
+- [x] scan cache directory to in-memory index
+- [x] watch cache directory for changes
+- [ ] manually clear cache entries in a (local) directory using a pattern on cache key
+- [ ] cache invalidation protocol (merge with emgag/varnish-towncrier?)
+- [ ] pub/sub channel listen (different providers? redis, sns, azure service bus)
+- [ ] config file (viper?)
+- [ ] manually clear cache entries (pub/sub invoke)
 
 ## scribbles
 
