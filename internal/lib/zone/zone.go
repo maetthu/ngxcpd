@@ -4,7 +4,7 @@ import (
 	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
 	"github.com/patrickmn/go-cache"
 	"github.com/rjeczalik/notify"
-	"log"
+	"gopkg.in/tomb.v2"
 	"os"
 	"path/filepath"
 	"time"
@@ -26,41 +26,76 @@ func (z *Zone) Warmup(numWorkers int) error {
 }
 
 // Watch starts listening for filesystem changes in cache directory
-func (z *Zone) Watch() error {
-	c := make(chan notify.EventInfo, 100)
+func (z *Zone) Watch(eventBufferSize int) (*tomb.Tomb, error) {
+	c := make(chan notify.EventInfo, eventBufferSize)
+	t := &tomb.Tomb{}
+
+	root, err := filepath.Abs(z.Path)
+
+	if err != nil {
+		return nil, err
+	}
 
 	watchFor := []notify.Event{
+		notify.InMovedFrom,
 		notify.InMovedTo,
 		notify.Remove,
+		notify.InDeleteSelf,
+		notify.InMoveSelf,
 	}
 
 	if err := notify.Watch(filepath.Join(z.Path, "..."), c, watchFor...); err != nil {
-		return err
+		return nil, err
 	}
 
-	defer notify.Stop(c)
+	t.Go(
+		func() error {
+			for {
+				select {
+				case e := <-c:
+					switch e.Event() {
+					case notify.InMovedTo:
+						// cache file names are always 32 characters long
+						if len(filepath.Base(e.Path())) != 32 {
+							break
+						}
 
-	for e := range c {
-		switch e.Event() {
-		case notify.InMovedTo:
-			if ce, err := proxycache.FromFile(e.Path()); err == nil {
-				if h, err := ce.Hash(); err == nil {
-					z.Cache.Set(h, ce, cache.DefaultExpiration)
+						if ce, err := proxycache.FromFile(e.Path()); err == nil {
+							if h, err := ce.Hash(); err == nil {
+								z.Cache.Set(h, ce, cache.DefaultExpiration)
+							}
+						}
+
+					case notify.InDeleteSelf:
+						fallthrough
+					case notify.InMoveSelf:
+						// if our root directory is removed, cancel watch
+						if e.Path() == root {
+							_ = t.Killf("Root directory disappeared, canceling watch")
+						}
+
+					case notify.InMovedFrom:
+						fallthrough
+					case notify.Remove:
+						// there may be false positives for temporary files created by nginx before moving it to the
+						// final destination. since its file name isn't a valid hash, just ignore it.
+						f := filepath.Base(e.Path())
+						z.Cache.Delete(f)
+					}
+
+					/*log.Println("Got event:", e)
+					log.Printf("%+v\n", e.Path())
+					log.Printf("%+v\n", e.Sys())*/
+
+				case <-t.Dying():
+					notify.Stop(c)
+					return nil
 				}
 			}
-		case notify.Remove:
-			// there may be false positives for temporary files created by nginx before moving it to the
-			// final destination. since its file name isn't a valid hash, just ignore it.
-			f := filepath.Base(e.Path())
-			z.Cache.Delete(f)
-		}
+		},
+	)
 
-		log.Println("Got event:", e)
-		log.Printf("%+v\n", e.Path())
-		log.Printf("%+v\n", e.Sys())
-	}
-
-	return nil
+	return t, nil
 }
 
 // Delete removes an entry from cache and from filesystem

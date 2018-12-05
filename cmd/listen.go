@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"errors"
 	"github.com/maetthu/ngxcpd/internal/lib/zone"
 	"github.com/spf13/cobra"
 	"log"
 	"runtime"
+	"time"
 )
 
 func init() {
@@ -33,10 +35,22 @@ var listenCmd = &cobra.Command{
 			log.Println(z.Cache.ItemCount())
 		}()
 
+		log.Println(z.Path)
+
 		log.Println("Ready to watch...")
 
-		if err := z.Watch(); err != nil {
+		t, err := z.Watch(4 * 4096)
+
+		if err != nil {
 			log.Fatal(err)
+		}
+
+		time.AfterFunc(60*time.Second, func() {
+			t.Kill(errors.New("Cancel"))
+		})
+
+		if err := t.Wait(); err != nil {
+			log.Println(err)
 		}
 
 	},
