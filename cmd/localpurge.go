@@ -61,6 +61,7 @@ var localpurgeCmd = &cobra.Command{
 				if dryrun {
 					log.Infof("[%s] Key \"%s\" is matching", base, entry.Key)
 					fmt.Printf("%s\t%s\n", base, entry.Key)
+					atomic.AddUint32(&count, 1)
 				} else {
 					log.Infof("[%s] Key \"%s\" is matching, deleting", base, entry.Key)
 
@@ -90,6 +91,12 @@ var localpurgeCmd = &cobra.Command{
 				fmt.Println("No cache entries matched, nothing removed")
 			} else {
 				fmt.Printf("Removed %d cache entries\n", count)
+			}
+		} else {
+			if count == 0 {
+				fmt.Println("No cache entries matched")
+			} else {
+				fmt.Printf("A real run would remove %d cache entries\n", count)
 			}
 		}
 
