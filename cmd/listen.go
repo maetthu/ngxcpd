@@ -14,7 +14,8 @@ func init() {
 }
 
 var listenCmd = &cobra.Command{
-	Use: "listen",
+	Use:   "listen",
+	Short: "TODO...",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		z, err := zone.NewZone(args[0])
