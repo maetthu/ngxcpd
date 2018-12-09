@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-var testdataDir = "../../../testdata/cache_files"
+var testdataDir = "../../testdata/cache_files"
 
 // TestFromFile checks if the file parser works as expected
 func TestFromFile(t *testing.T) {

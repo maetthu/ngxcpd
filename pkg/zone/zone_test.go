@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-var testdataDir = "../../../testdata/cache_files"
+var testdataDir = "../../testdata/cache_files"
 
 func initZone(zoneDir string, t *testing.T) (*zone.Zone, func(*testing.T)) {
 	tmpdir, err := ioutil.TempDir("", "zone_test")

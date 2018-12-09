@@ -36,7 +36,7 @@ for z in $(seq 1 $ZONES); do
 package testfixtures
 
 import (
-	\"github.com/maetthu/ngxcpd/internal/pkg/proxycache\"
+	\"github.com/maetthu/ngxcpd/pkg/proxycache\"
 	\"time\"
 )
 
