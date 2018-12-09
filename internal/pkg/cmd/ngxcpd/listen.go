@@ -1,8 +1,8 @@
-package cmd
+package ngxcpd
 
 import (
 	"errors"
-	"github.com/maetthu/ngxcpd/internal/lib/zone"
+	"github.com/maetthu/ngxcpd/pkg/zone"
 	"github.com/spf13/cobra"
 	"log"
 	"runtime"

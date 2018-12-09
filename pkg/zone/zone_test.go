@@ -2,9 +2,9 @@ package zone_test
 
 import (
 	"github.com/karrick/godirwalk"
-	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
-	"github.com/maetthu/ngxcpd/internal/lib/testfixtures"
-	"github.com/maetthu/ngxcpd/internal/lib/zone"
+	"github.com/maetthu/ngxcpd/internal/pkg/testfixtures"
+	"github.com/maetthu/ngxcpd/pkg/proxycache"
+	"github.com/maetthu/ngxcpd/pkg/zone"
 	"io/ioutil"
 	"os"
 	"os/exec"

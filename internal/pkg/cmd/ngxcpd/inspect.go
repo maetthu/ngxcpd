@@ -1,8 +1,8 @@
-package cmd
+package ngxcpd
 
 import (
 	"fmt"
-	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
+	"github.com/maetthu/ngxcpd/pkg/proxycache"
 	"github.com/spf13/cobra"
 	"os"
 	"strconv"

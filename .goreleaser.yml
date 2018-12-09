@@ -1,7 +1,9 @@
 builds:
-  - binary: ngxcpd
+  -
+    main: ./cmd/ngxcpd/main.go
+    binary: ngxcpd
     ldflags:
-      - -s -w -X github.com/maetthu/ngxcpd/internal/lib/version.Version={{.Version}} -X github.com/maetthu/ngxcpd/internal/lib/version.Commit={{.Commit}} -X github.com/maetthu/ngxcpd/internal/lib/version.Date={{.Date}}
+      - -s -w -X github.com/maetthu/ngxcpd/internal/pkg/version.Version={{.Version}} -X github.com/maetthu/ngxcpd/internal/pkg/version.Commit={{.Commit}} -X github.com/maetthu/ngxcpd/internal/pkg/version.Date={{.Date}}
     env:
       - CGO_ENABLED=0
     goos:

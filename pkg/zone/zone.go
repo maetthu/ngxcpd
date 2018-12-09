@@ -1,7 +1,7 @@
 package zone
 
 import (
-	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
+	"github.com/maetthu/ngxcpd/pkg/proxycache"
 	"github.com/patrickmn/go-cache"
 	"github.com/rjeczalik/notify"
 	"gopkg.in/tomb.v2"

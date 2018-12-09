@@ -1,10 +1,9 @@
-// AUTOMAGICALLY GENERATED
-// +build fixtures
+// +build !fixtures
 
 package testfixtures
 
 import (
-	"github.com/maetthu/ngxcpd/internal/lib/proxycache"
+	"github.com/maetthu/ngxcpd/pkg/proxycache"
 )
 
 // TestdataCacheFilesZone1 contains expected metadata of files in testdata/cache_files/zone1

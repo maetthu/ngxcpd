@@ -1,4 +1,4 @@
-package cmd
+package ngxcpd
 
 import (
 	log "github.com/sirupsen/logrus"

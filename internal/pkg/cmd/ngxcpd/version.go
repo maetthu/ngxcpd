@@ -1,9 +1,9 @@
-package cmd
+package ngxcpd
 
 import (
 	"fmt"
 
-	"github.com/maetthu/ngxcpd/internal/lib/version"
+	"github.com/maetthu/ngxcpd/internal/pkg/version"
 	"github.com/spf13/cobra"
 )
 
